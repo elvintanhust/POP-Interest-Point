@@ -49,7 +49,7 @@ id:0 repeat:x.xxx homo_corr:x.xxx m_score:x.xxx ...
 --------start the evaluation of superpoint--------
 ...
 ```
-Here POP and several comparison methods ([SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork), SIFT, ORB) are evaluated on the `i_ajuntament` sequence in HPatches. Note the `i_ajuntament` sequence has been placed in the `hpatches-sequences-release` folder to so that the `eval_POP_net.py` script can be run directly. Furthermore, the pre-trained model provided by [SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork) is also included in this repository to simplify the configuration.
+Here POP and several comparison methods ([SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork), SIFT, ORB) are evaluated on the `i_ajuntament` sequence in HPatches. Note the `i_ajuntament` sequence has been placed in the `hpatches-sequences-release` folder to so that the `eval_POP_net.py` script can be run directly. Furthermore, the pre-trained model `superpoint_v1.pth` provided by [SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork) is also included in this repository to simplify the configuration.
 
 In the above process, the `statistics_results` folder is created automatically and the main statistics results are written in it. After the evaluations of all methods are finished, four text files, namely `ORB.txt`, `POP_net.txt`,  `SIFT.txt`,  `superpoint.txt`, should appear in this folder. 
 
@@ -118,4 +118,4 @@ In the Section 5.5 of paper, we visualize the informativeness results in Fig. 3.
 ```bash
 python recon_full_image.py
 ```
-Then the images `demo_input_images/` folder are considered as the input images, and the  the results can be obtained in the `recon_image_results` folder. Note the visualization results here are slightly different from that shown in the paper. The reason is that here the pre-trained reconstructor model is just trained with COCO dataset but not fineturned for the single image.
+Then the images `demo_input_images/` folder are considered as the input images, and the  the results can be obtained in the `recon_image_results/` folder. Note the visualization results here are slightly different from that shown in the paper. The reason is that here the pre-trained reconstructor model is just trained with COCO dataset but not fineturned for the single image.
