@@ -28,11 +28,11 @@ pip install 'opencv-contrib-python<=3.12'
 
 ## Pretrained models
 We provide the pre-trained models in the `save_POP_model/` and `save_recon_model/` folders:
-* `POP_net_pretrained.pth` in the `save_POP_model/` folder: the model to achieve the detection and description of interest point. It is the model denoted as `POP` in the paper, which is used in most experiments.
-* `recon_net_pretrained.pth` in the `save_recon_model/` folder: the model of reconstructor which is detailed in the Section 3.4. Here the model is trained with COCO 2014 dataset. During the training of POP, this model is used in the computation of informativeness property. Note POP no longer depends on this model in the testing stage.
+* `save_POP_model/POP_net_pretrained.pth` in the folder: the model to achieve the detection and description of interest point. It is the model denoted as `POP` in the paper, which is used in most experiments.
+* `save_recon_model/recon_net_pretrained.pth` in the folder: the model of reconstructor which is detailed in the Section 3.4. Here the model is trained with COCO 2014 dataset. During the training of POP, this model is used in the computation of informativeness property. Note POP no longer depends on this model in the testing stage.
 
 ## The evaluation of POP
-We provide the evaluation code on [HPatches](https://github.com/hpatches/hpatches-dataset) dataset, which references the evaluation process of [SuperPoint](https://github.com/rpautrat/SuperPoint). Before perform the evaluation on the entire HPatches, you can first verify the environment by running the script directly:
+We provide the evaluation code for [HPatches](https://github.com/hpatches/hpatches-dataset) dataset, which references the evaluation process of [SuperPoint](https://github.com/rpautrat/SuperPoint). Before perform the evaluation on the entire HPatches, you can first verify the environment by running the script directly:
 ```bash
 python eval_POP_net.py
 ```
@@ -49,11 +49,13 @@ id:0 repeat:x.xxx homo_corr:x.xxx m_score:x.xxx ...
 --------start the evaluation of superpoint--------
 ...
 ```
-Here POP and several comparison methods ([SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork), SIFT, ORB) are evaluated on the `i_ajuntament` sequence in HPatches. Note the `i_ajuntament` sequence has been placed in the `hpatches-sequences-release` folder to so that the `eval_POP_net.py` script can be run directly. Furthermore, the pre-trained model `superpoint_v1.pth` provided by [SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork) is also included in this repository to simplify the configuration.
+Here POP and several comparison methods ([SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork), SIFT, ORB) are evaluated on the `i_ajuntament` sequence in HPatches. The default model of POP is set as `save_POP_model/POP_net_pretrained.pth`. Note the `i_ajuntament` sequence has been placed in the `hpatches-sequences-release` folder so that the `eval_POP_net.py` script can be run directly. Furthermore, the pre-trained model `superpoint_v1.pth` provided by [SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork) is also included in this repository to simplify the configuration.
 
-In the above process, the `statistics_results` folder is created automatically and the main statistics results are written in it. After the evaluations of all methods are finished, four text files, namely `ORB.txt`, `POP_net.txt`,  `SIFT.txt`,  `superpoint.txt`, should appear in this folder. 
+In the above process, the `statistics_results` folder is created automatically and the main statistics results are written in it. After the evaluations of all methods, four text files, namely `ORB.txt`, `POP_net.txt`,  `SIFT.txt`,  `superpoint.txt`, should appear in this folder. 
 
 The environment is verified to be correct if the above statistics results can be outputted. Then you can place other data in the `hpatches-sequences-release` folder to further evaluate the methods. Note the format of the data should be consistent to the HPatches sequences. One convenient way is to download the [HPatches](https://github.com/hpatches/hpatches-dataset) sequences first, and then unzip it into the `hpatches-sequences-release` folder.
+
+For more details about all parameters of `eval_POP_net.py`, run `python eval_POP_net.py --help`.
 
 ## Training the model
 ### Training POP without informativeness property
