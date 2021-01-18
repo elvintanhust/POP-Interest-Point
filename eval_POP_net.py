@@ -20,7 +20,7 @@ def eval(args):
     mathod_info_now['para_dict'] = {
         'our_model_name': args.POP_model_path,
         'eval_match': True,
-        'write_filename': 'POP_net.pth'}
+        'write_filename': 'POP_net'}
     mathod_info_list.append(mathod_info_now)
 
     # 对比算法
@@ -98,22 +98,18 @@ def eval(args):
                     result_filename = os.path.join(args.statistics_save_path,
                                                    method_fullname + '.txt')
                     result_info_str = (
-                        'dataset: %s, image_row: %d, image_col: %d, max_point_num: %d,'
-                        'soft_dist: %d, resp_thre:%.2f' %
+                        'dataset: %s, image_row: %d, image_col: %d, max_point_num: %d, '
+                        'epsilon: %d, resp_thre:%.2f, ' %
                         (dataset_info['name'], image_info['image_row'],
                          image_info['image_col'], image_info['max_point_num'], soft_dist,
                          resp_thre))
-                    result_info_str += (' nms_rad: %d, out_dist: %d' % (nms_rad, out_dist))
+                    result_info_str += ('nms_rad: %d, out_dist: %d' % (nms_rad, out_dist))
                     result_str = \
                         result_item[0] + ':%.5f, ' % result_mean[0] + \
                         result_item[1] + ':%.5f, ' % result_mean[1] + \
                         result_item[2] + ':%.5f, ' % result_mean[2] + \
                         result_item[3] + ':%.5f, ' % result_mean[3] + \
                         result_item[4] + ':%.5f, ' % result_mean[4] + \
-                        result_item[5] + ':%.5f, ' % result_mean[5] + \
-                        result_item[6] + ':%.5f, ' % result_mean[6] + \
-                        result_item[7] + ':%.5f, ' % result_mean[7] + \
-                        result_item[8] + ':%.5f, ' % result_mean[8] + \
                         'time:%.5f' % time_mean
 
                     with open(result_filename, 'a') as file_to_write:
