@@ -142,7 +142,7 @@ def main():
     parser.add_argument('--matching-image-save-path', type=str,
                         default=None,
                         help='the path to save the image matching results, ' \
-                             'which requires some spaces to store the result of every image pair.')
+                             'which requires some spaces to store the results of every image pair.')
 
     args = parser.parse_args()
 

@@ -121,3 +121,5 @@ In the Section 5.5 of paper, we visualize the informativeness results in Fig. 3.
 python recon_full_image.py
 ```
 Then the images `demo_input_images/` folder are considered as the input images, and the  the results can be obtained in the `recon_image_results/` folder. Note the visualization results here are slightly different from that shown in the paper. The reason is that here the pre-trained reconstructor model is just trained with COCO dataset but not fineturned for the single image.
+
+For more details about all parameters of `recon_full_image.py`, run `python recon_full_image.py --help`.
