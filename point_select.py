@@ -30,12 +30,12 @@ def get_print_dict(fore_num_cum, fore_loss_cum, back_num_cum,
 
 # 尝试不允许重建损失对特征点模型进行更新
 def point_select(score_output: torch.Tensor, score_detach: torch.Tensor,
-                  desc: torch.Tensor, gt: torch.Tensor, H: torch.Tensor,
-                  range_now: range, local_rad: int,
-                  out_rad: int, inner_rad: int, soft_dist: int,
-                  back1_weight: float, out_dist: int, image_ori: torch.Tensor,
-                  recon_target: torch.Tensor, net_recon, need_info_mark
-                  ):
+                 desc: torch.Tensor, gt: torch.Tensor, H: torch.Tensor,
+                 range_now: range, local_rad: int,
+                 out_rad: int, inner_rad: int, soft_dist: int,
+                 back1_weight: float, out_dist: int, image_ori: torch.Tensor,
+                 recon_target: torch.Tensor, net_recon, need_info_mark
+                 ):
     # 得到网络输出的非求导副本
     desc_detach = desc.detach()
     gt_vec = gt.view(-1)
@@ -306,10 +306,13 @@ def point_select(score_output: torch.Tensor, score_detach: torch.Tensor,
     back2_y = np.random.randint(0, image_row, size=back2_recon_num)
     recon_x = np.r_[fore_x_ref, back1_x, back2_x]
     recon_y = np.r_[fore_y_ref, back1_y, back2_y]
-    with torch.no_grad():
-        _, loss_info = calcu_info(desc_detach, H, range_now,
-                                  recon_x, recon_y,
-                                  xy_range, out_dist, recon_target, net_recon, True)
+    if need_info_mark:
+        with torch.no_grad():
+            _, loss_info = calcu_info(desc_detach, H, range_now,
+                                      recon_x, recon_y,
+                                      xy_range, out_dist, recon_target, net_recon, True)
+    else:
+        loss_info = torch.zeros(1)
 
     info_value = loss_info.item()
 

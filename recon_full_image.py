@@ -112,7 +112,7 @@ def main():
                         help='the path of input images, which should be ' \
                              'a directory containing only images')
     parser.add_argument('--recon-model-path', type=str,
-                        default='save_recon_model/recon_net_pretrained',
+                        default='save_recon_model/recon_net_pretrained.pth',
                         help='set the path of the reconstruction network')
     parser.add_argument('--device', type=str, default='cuda:0',
                         help='the device used to train the model, ' \

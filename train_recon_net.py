@@ -100,14 +100,14 @@ def train_recon(args):
                     'model_state_dict_recon': net_recon.state_dict(),
                     'optimizer_recon_state_dict': optimizer_recon.state_dict(),
                     'epoch': epoch,
-                }, os.path.join(write_dir, 'recon_net'))
+                }, os.path.join(write_dir, 'recon_net.pth'))
 
         # 每代结束时保存一次模型
         torch.save({
             'model_state_dict_recon': net_recon.state_dict(),
             'optimizer_recon_state_dict': optimizer_recon.state_dict(),
             'epoch': epoch,
-        }, os.path.join(write_dir, 'recon_net_epoch_end%d' % epoch))
+        }, os.path.join(write_dir, 'recon_net_epoch_end%d.pth' % epoch))
 
 
 def main():
@@ -145,7 +145,7 @@ def main():
                              'print_iter_interval iterations')
     parser.add_argument('--save-iter-interval', type=int, default=1000,
                         help='the temporary model will be saved every ' \
-                             'save_iter_interval iteration, and the filename is recon_net_temp.')
+                             'save_iter_interval iteration, and the filename is recon_net_temp.pth')
     parser.add_argument('--random_aug_num', type=int, default=10,
                         help='every training image will be transformed to ' \
                              'random_aug_num new images')

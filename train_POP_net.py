@@ -174,14 +174,14 @@ def train_POP(args):
                     'model_state_dict': net.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                     'epoch': epoch,
-                }, os.path.join(save_path, 'POP_net_temp'))
+                }, os.path.join(save_path, 'POP_net_temp.pth'))
         if epoch % save_epoch_interval == save_epoch_interval - 1:
             torch.save({
                 # 'model_state_dict': net.module.state_dict(),
                 'model_state_dict': net.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'epoch': epoch,
-            }, os.path.join(save_path, 'POP_net_epoch_end%d' % (epoch)))
+            }, os.path.join(save_path, 'POP_net_epoch_end%d.pth' % (epoch)))
 
 
 def main():
@@ -224,7 +224,7 @@ def main():
                              'print_iter_interval iterations')
     parser.add_argument('--save-iter-interval', type=int, default=1000,
                         help='the temporary model will be saved every ' \
-                             'save_iter_interval iteration, and the filename is POP_net_temp. ')
+                             'save_iter_interval iteration, and the filename is POP_net_temp.pth')
     parser.add_argument('--random_aug_num', type=int, default=10,
                         help='every training image will be transformed to ' \
                              'random_aug_num new images')

@@ -241,24 +241,20 @@ class EvaluationMain():
 
             result_mat[idx] = result_vec
 
-            print('id:%d' % idx,
-                  result_item[0], '%.3f' % result_vec[0],
-                  result_item[1], '%.3f' % result_vec[1],
-                  result_item[2], '%.3f' % result_vec[2],
-                  result_item[3], '%.3f' % result_vec[3],
-                  result_item[4], '%.3f' % result_vec[4],
-                  result_item[7], '%.3f' % result_vec[7])
+            print('(epsilon=%d)' % self.soft_dist, 'id:%d' % idx,
+                  '%s: %.3f' % (result_item[0], result_vec[0]),
+                  '%s: %.3f' % (result_item[1], result_vec[1]),
+                  '%s: %.3f' % (result_item[2], result_vec[2]),
+                  '%s: %.3f' % (result_item[3], result_vec[3]),
+                  '%s: %.3f' % (result_item[4], result_vec[4]))
 
         result_mean = np.mean(result_mat, axis=0)
-        print(result_item[0], '%.5f' % result_mean[0],
-              result_item[1], '%.5f' % result_mean[1],
-              result_item[2], '%.5f' % result_mean[2],
-              result_item[3], '%.5f' % result_mean[3],
-              result_item[4], '%.5f' % result_mean[4],
-              result_item[5], '%.5f' % result_mean[5],
-              result_item[6], '%.5f' % result_mean[6],
-              result_item[7], '%.5f' % result_mean[7],
-              result_item[8], '%.5f' % result_mean[8])
+        print('## accuracy on the entire dataset (epsilon=%d): \n ## ' % self.soft_dist,
+              '%s: %.5f' % (result_item[0], result_mean[0]),
+              '%s: %.5f' % (result_item[1], result_mean[1]),
+              '%s: %.5f' % (result_item[2], result_mean[2]),
+              '%s: %.5f' % (result_item[3], result_mean[3]),
+              '%s: %.5f' % (result_item[4], result_mean[4]))
 
         time_mean = time_num_list[0] / (time_num_list[1] + 1e-10)
         return result_mean, result_mat, result_item, time_mean
