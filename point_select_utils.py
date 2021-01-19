@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from scipy.ndimage.filters import maximum_filter
 from scipy.ndimage.morphology import binary_dilation
 
+# several utility functions for the selection of interest point
 
 def get_circle_win(rad: int, dtype: str):
     win_size = 2 * rad + 1
@@ -42,7 +43,7 @@ def get_mean_repeat(output_resp: torch.Tensor, H: torch.Tensor,
                     local_rad: int, soft_dist: int, out_dist: int,
                     min_need_avail_num: int):
     each_num = output_resp.shape[0]
-    #
+    # obtain the local maximum
     output_resp_max = F.max_pool2d(output_resp, kernel_size=2 * local_rad + 1,
                                    padding=local_rad, stride=1)
     local_win = get_circle_win_tensor(local_rad, dtype=output_resp.dtype)
@@ -63,18 +64,18 @@ def get_mean_repeat(output_resp: torch.Tensor, H: torch.Tensor,
                          out_dist, image_row - out_dist])
     resp_thre = 0.5
 
-    # 统计投影变换后每个像素位于有效区域的次数
+    # avail_cum store the visible number of every point
     back_resp_value = -3
     avail_cum = np.zeros([image_row, image_col], dtype='int')
     fore_num_cum_runtime = 0
 
-    #
+    # transform every image to the reference image
     for image_id in range(each_num):
         resp = output_resp[image_id].cpu().numpy().squeeze()
-        # 当前图像对应的单应变换矩阵
+        # the generated homography matrix
         h_now = H[image_id].numpy()
         h_inv_now = np.linalg.inv(h_now)
-        # 对有效的投影区域累加数目
+        # cumulate the visible point
         mat_ref = cv2.warpPerspective(resp.astype('int'), h_inv_now,
                                       (image_col, image_row),
                                       borderValue=back_resp_value,
@@ -83,13 +84,13 @@ def get_mean_repeat(output_resp: torch.Tensor, H: torch.Tensor,
         avail_cum[avail_pos_now] += 1
 
         max_pos_now = max_pos_tensor[image_id].cpu().numpy().squeeze().astype('bool')
-        # 确保每个邻域内的局部极大值点只有一个
+        # guarantee at most one point can be selected as interest point in a local window
         max_mask = (max_pos_now & (resp > resp_thre))
         max_num_mat = np.round(max_num_tensor[image_id].cpu().numpy().squeeze())
         max_mask = (max_mask & (max_num_mat == 1))
         point_y, point_x = np.where(max_mask)
 
-        # 记录测试阶段特征点的数目
+        # record the number of interest point
         fore_num_cum_runtime += point_y.size
 
         if point_y.size < 1:
@@ -123,19 +124,13 @@ def get_mean_repeat(output_resp: torch.Tensor, H: torch.Tensor,
     point_cum[avail_cum < min_need_avail_num] = 0
 
     avail_pos = avail_cum >= min_need_avail_num
-    # 注意此处不能使用local_rad抑制局部非最大，因为不同图像具有不同的尺度
-    # 在基准坐标下使用local_rad抑制会导致大尺度的点过于稀疏
-    # 因此默认使用soft_dist进行抑制即可，且不应超过1个像素
-    # final_soft_rad = min(1, soft_dist)
-    # 聚集重复率数值，突出中心位置
+
     final_soft_rad = soft_dist
     final_soft_win = get_circle_win(final_soft_rad, dtype='float32')
-    # point_cum_focus = cv2.filter2D(point_cum, -1, final_soft_win)
     point_cum_focus = point_cum.copy()
-    # 转为整型
     point_cum_focus = np.rint(point_cum_focus).astype('int')
     point_cum = np.rint(point_cum).astype('int')
-    # 保留最大位置
+    # obtain the maximum
     point_cum_max = maximum_filter(point_cum_focus, footprint=final_soft_win)
     point_cum[np.logical_not(point_cum_focus == point_cum_max)] = 0
     cum_max_pos = (point_cum > 0)

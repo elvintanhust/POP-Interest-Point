@@ -14,6 +14,7 @@ ia.seed(random.randint(0, 100000))
 avail_image_ext = ['.jpg', '.jpeg', '.tif', '.tiff', '.png',
                    '.bmp', '.gif', '.ppm']
 
+# several dataset class
 
 def filter_out_non_image(image_names_all, print_mark=False):
     # check the ext
@@ -31,9 +32,6 @@ def filter_out_non_image(image_names_all, print_mark=False):
                   'extensions are not in %s' % (ignore_num, ', '.join(avail_image_ext)))
 
     return image_names
-
-
-    # load the dataset
 
 
 class ToTensor(object):

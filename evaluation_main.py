@@ -11,8 +11,9 @@ from POP_net_class import POPNet
 from demo_superpoint import SuperPointNet
 from torch.utils.data import DataLoader
 from dataset_class import HPatchesDataset
-from evaluation_class import EvaluationSep
+from evaluation_class import EvaluationSeq
 
+# compute the performance metrics for a methods on a dataset
 
 class EvaluationMain():
     def __init__(self, device_str='cuda:0'):
@@ -29,8 +30,9 @@ class EvaluationMain():
         self.device = torch.device(device_str)
         self.match_image_path = None
 
-        #
+        # SIFT and ORB directly use the implementation of OpenCV
         self.tradition_name = {'SIFT', 'ORB'}
+        # ORB use the HAMMING distance
         self.need_HAMMING_name = {'ORB'}
 
     def set_dataset(self, root_dir: str, match_image_path: str = None):
@@ -54,7 +56,7 @@ class EvaluationMain():
                                   out_dist, self.image_row - out_dist])
 
     def main(self, methed_name: str, para_dict: dict = None):
-        # 统计运行时间的变量
+        # record the runtime
         time_num_list = [0, 0]
 
         self.methed_name = methed_name
@@ -97,7 +99,7 @@ class EvaluationMain():
             with torch.no_grad():
                 time_last = time.time()
                 score_output, desc = POP_net(input_)
-                # 转换为概率值
+                # transform to probability
                 score = torch.sigmoid(score_output).detach()
                 time_cum += (time.time() - time_last)
 
@@ -108,7 +110,7 @@ class EvaluationMain():
             desc_list_res = self.get_easy_desc_from_map(point_list_res, desc)
             time_cum += (time.time() - time_last)
 
-            # 记录处理时间和图片数目
+            # record the runtime
             time_num_list[0] += time_cum
             time_num_list[1] += len(point_list_res)
             return point_list_res, desc_list_res
@@ -148,7 +150,7 @@ class EvaluationMain():
 
             time_cum = (time.time() - time_last)
 
-            # 记录处理时间和图片数目
+            # record the runtime
             time_num_list[0] += time_cum
             time_num_list[1] += len(point_list_res)
 
@@ -171,7 +173,7 @@ class EvaluationMain():
 
                 point_now = np.array([p.pt for p in kp], dtype='float32')
                 point_resp = np.array([p.response for p in kp], dtype='float32')
-                # 加入第三列作为置信度，保持格式的一致性
+                # add the confidence into the third column
                 point_now = np.c_[point_now, point_resp]
                 if point_now.size > 1:
                     point_now, remain_ind = self.select_k_best_self(point_now)
@@ -180,26 +182,26 @@ class EvaluationMain():
                 point_list_res.append(point_now)
                 desc_list_res.append(desc_now)
 
-            # 记录处理时间和图片数目
+            # record the runtime
             time_num_list[0] += time_cum
             time_num_list[1] += len(point_list_res)
             return point_list_res, desc_list_res
 
-        # ################## 各算法子函数定义至此结束 ###################
+        # ##### the definitions of the subfunctions of algorithms are finished ######
         result_item = ['repeat', 'homo_corr', 'm_score', 'homo_corr_std',
                        'point_num', 'true_num', 'num_ratio_detect',
                        'num_ratio_match', 'num_ratio_ransac']
         result_mat = np.zeros((len(dataloader), len(result_item)), dtype='float')
         for idx, batch in enumerate(dataloader, 0):
-            # 提取batch中的各类数据
+            # obtain the image and groundtruth
             input, H, image_shape, image_name = batch['image'], batch['H'], \
                                                 batch['image_shape'], batch['image_name']
             input_gray = batch['image_gray']
             image_ori = batch['image_ori']
-            # 得到批数目和图像数目
             batch_size = input.size(0)
             input_each_num = input.size(1)
-            # 以图像为单元设置数据的shape，使得第0维可以直接索引每个图像
+            assert batch_size==1
+            # reshape the data as 4-D tensors
             input = input.view(tuple(np.r_[input.shape[0] * input.shape[1],
                                            input.shape[2:]]))
             H = H.view(tuple(np.r_[H.shape[0] * H.shape[1], H.shape[2:]]))
@@ -212,7 +214,6 @@ class EvaluationMain():
             H = H.numpy()
             image_shape_ori = image_shape_ori.numpy()
             image_ori = image_ori.numpy()
-            # image_ori_now = image_ori[image_id, :, :, :]
 
             if self.methed_name == 'superpoint':
                 point_list, desc_list = get_superpoint_point(input_gray)
@@ -223,14 +224,14 @@ class EvaluationMain():
             else:
                 point_list = None
                 desc_list = None
-                assert 'unknown mathod'
+                assert 'unknown method'
 
             if self.methed_name in self.need_HAMMING_name:
                 need_HAMMING = True
             else:
                 need_HAMMING = False
 
-            eval_obj = EvaluationSep(point_list, desc_list, H,
+            eval_obj = EvaluationSeq(point_list, desc_list, H,
                                      self.soft_dist, self.out_dist,
                                      self.image_row, self.image_col, image_shape_ori,
                                      need_HAMMING, self.match_image_path)

@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import time
 
+# the architecture of reconstructor
 
 class ReconstructNet(nn.Module):
     def __init__(self, feature_len, in_f_len):
@@ -65,12 +66,3 @@ class ReconstructNet(nn.Module):
 
     def forward(self, input):
         return self.decoder(self.encoder(input))
-
-
-if __name__ == '__main__':
-    device = torch.device("cuda:1")
-    net = ReconstructNet(feature_len=64, in_f_len=64)
-    net.to(device)
-    input = torch.rand(512, 64, 1, 1, dtype=torch.float, device=device)
-    output = net(input)
-    print('111', output.size())

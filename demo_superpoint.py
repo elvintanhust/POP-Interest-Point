@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# this script is modified from the code in https://github.com/magicleap/SuperPointPretrainedNetwork
+# we use this script only for the evaluation of SuperPoint
 #
 # %BANNER_BEGIN%
 # ---------------------------------------------------------------------

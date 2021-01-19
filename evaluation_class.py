@@ -9,7 +9,9 @@ import math
 from point_select_utils import remove_out_point
 
 
-class EvaluationSep():
+# compute the performance metrics on a sequence of images
+
+class EvaluationSeq():
     def __init__(self, point_list: list, desc_list: list, H: np.ndarray,
                  soft_dist: int, out_dist: int,
                  image_row: int, image_col: int, image_shape_ori: np.ndarray,

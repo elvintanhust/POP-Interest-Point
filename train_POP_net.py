@@ -21,17 +21,15 @@ from point_select import point_select
 
 warnings.filterwarnings("ignore")
 
+# train POP network
 
 def train_POP(args):
     device = args.device
     device_recon = args.device
     save_path = args.save_path
 
-    # 每隔save_epoch_interval代保存一次模型
     save_epoch_interval = args.save_epoch_interval
-    # 显示间隔
     print_interval = args.print_iter_interval
-    # 保存间隔，考虑到每个epoch数据量太大，不再固定每个epoch结束时保存
     save_interval = args.save_iter_interval
 
     point_dataset = PointDataset(args.train_image_path, args.random_aug_num,
@@ -66,12 +64,13 @@ def train_POP(args):
 
     image_row, image_col = point_dataset.image_row, point_dataset.image_col
     resp_thre = 0.5
-    # 邻域半径
+    # the local radius of the suppression of local non-maximum
     local_rad = 4
     back1_weight = 1
-    # 图像边界处需要忽略的范围
+    # the region near to the border of image will be ignored in the computation of loss
     out_dist = 7
-    # 容许误差
+    # the pair of points whose reprojection error is less than soft_dist will be
+    # considered as the correspondence
     soft_dist = 1
 
     cum_iter_num = 0
@@ -113,7 +112,6 @@ def train_POP(args):
 
             input = input.to(device)
             score_output, desc = net(input)
-            # 转换为概率值
             score_detach = torch.sigmoid(score_output).detach()
             gt = score_output.detach().clone()
 
@@ -225,7 +223,7 @@ def main():
     parser.add_argument('--save-iter-interval', type=int, default=1000,
                         help='the temporary model will be saved every ' \
                              'save_iter_interval iteration, and the filename is POP_net_temp.pth')
-    parser.add_argument('--random_aug_num', type=int, default=10,
+    parser.add_argument('--random-aug-num', type=int, default=10,
                         help='every training image will be transformed to ' \
                              'random_aug_num new images')
 
