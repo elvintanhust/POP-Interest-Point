@@ -11,7 +11,7 @@ from point_select_utils import calcu_info
 from point_select_utils import get_mean_repeat
 
 # select interest point with a unsupervised way
-# compute the loss of detection, description
+# compute the loss of detection and description
 
 def get_print_dict(fore_num_cum, fore_loss_cum, back_num_cum,
                    back_loss_cum, repeat_mean_cum, image_base_num,
