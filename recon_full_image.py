@@ -10,15 +10,15 @@ from dataset_class import ImageSet
 from torch.utils.data import DataLoader
 from point_select_utils import get_multi_patch
 
+# visualize the reconstruction results
 
 def visualize_recon(args):
     result_dir = args.result_save_path
 
-    # 可视化特征点检测结果
     device = torch.device(args.device)
     checkpoint = torch.load(args.recon_model_path, map_location=device)
 
-    # 加载重建网络
+    # load the checkpoint of reconstructor
     net_recon = ReconstructNet(feature_len=64, in_f_len=64)
     net_recon.load_state_dict(checkpoint['model_state_dict_recon'], strict=True)
     net_recon.eval()
@@ -41,7 +41,6 @@ def visualize_recon(args):
         assert batch_size == 1
         image_ori = image_ori.numpy()
         image_name = image_name[0]
-        # 用于决定写出的图像后缀
         image_base = os.path.splitext(image_name)[0]
         image_ext = os.path.splitext(image_name)[1]
 

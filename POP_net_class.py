@@ -4,7 +4,8 @@ import torch.nn.functional as F
 import time
 
 
-# 网络结构含有单个描述器
+# the architecture of POP_net
+
 class ResBlock(nn.Module):
     def __init__(self, in_channel_, out_channel_, kernel_size_,
                  stride_=1, padding_=0):

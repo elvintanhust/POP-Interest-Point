@@ -19,13 +19,18 @@ warnings.filterwarnings("ignore")
 
 
 # train the reconstructor
+
 def train_recon(args):
     write_dir = args.save_path
     device = torch.device(args.device)
+    save_epoch_interval=args.save_epoch_interval
+    print_interval = args.print_iter_interval
+    save_interval = args.save_iter_interval
 
     point_dataset = PointDataset(args.train_image_path, args.random_aug_num,
                                  args.train_height, args.train_width)
-    dataloader = DataLoader(point_dataset, batch_size=1, shuffle=True, num_workers=2)
+    dataloader = DataLoader(point_dataset, batch_size=1, shuffle=True,
+                            num_workers=args.data_num_workers)
 
     net_recon = ReconstructNet(feature_len=64, in_f_len=64)
     epoch_init = 0
@@ -45,19 +50,13 @@ def train_recon(args):
     loss_MSE = nn.MSELoss()
 
     image_row, image_col = point_dataset.image_row, point_dataset.image_col
-    # 局部块大小
+    # the size of local patch
     patch_rad = 8
     patch_size = 2 * patch_rad
-    # 局部块数目
+    # the number of patches
     patch_num = 300
-    # 显示间隔
-    print_interval = 4
-    # 保存间隔，考虑到每个epoch数据量太大，不再固定每个epoch结束时保存
-    save_interval = 500
-    # checkpoint保存间隔，使用批的迭代次数来定义
-    checkpoint_iter_num = 5000
-    cum_iter_num = 0
 
+    cum_iter_num = 0
     max_epoch = epoch_init + args.max_epoch
     batch_num = len(dataloader)
     for epoch in range(epoch_init, max_epoch):
@@ -102,19 +101,17 @@ def train_recon(args):
                     'epoch': epoch,
                 }, os.path.join(write_dir, 'recon_net.pth'))
 
-        # 每代结束时保存一次模型
-        torch.save({
-            'model_state_dict_recon': net_recon.state_dict(),
-            'optimizer_recon_state_dict': optimizer_recon.state_dict(),
-            'epoch': epoch,
-        }, os.path.join(write_dir, 'recon_net_epoch_end%d.pth' % epoch))
+        if epoch % save_epoch_interval == save_epoch_interval - 1:
+            torch.save({
+                'model_state_dict_recon': net_recon.state_dict(),
+                'optimizer_recon_state_dict': optimizer_recon.state_dict(),
+                'epoch': epoch,
+            }, os.path.join(write_dir, 'recon_net_epoch_end%d.pth' % epoch))
 
 
 def main():
     parser = argparse.ArgumentParser(description="Reconstructor Training")
 
-    # 'demo_images'
-    # '/home/ubuntu/yanpei/data/data_yanpei/train2014'
     parser.add_argument('--train-image-path', type=str,
                         default='demo_input_images',
                         help='the path of training images, which should be ' \
@@ -146,7 +143,7 @@ def main():
     parser.add_argument('--save-iter-interval', type=int, default=1000,
                         help='the temporary model will be saved every ' \
                              'save_iter_interval iteration, and the filename is recon_net_temp.pth')
-    parser.add_argument('--random_aug_num', type=int, default=10,
+    parser.add_argument('--random-aug-num', type=int, default=10,
                         help='every training image will be transformed to ' \
                              'random_aug_num new images')
 
