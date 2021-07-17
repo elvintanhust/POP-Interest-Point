@@ -133,7 +133,7 @@ def main():
     parser.add_argument('--device', type=str, default='cuda:0',
                         help='the device used to perform the model, ' \
                              'which is represented with the pytorch format')
-    parser.add_argument('--eval-comparison-methods', action='store_true', default=True,
+    parser.add_argument('--eval-comparison-methods', action='store_true', default=False,
                         help='whether evaluate the performance of the comparison methods')
     parser.add_argument('--statistics-save-path', type=str,
                         default='statistics_results',
@@ -149,7 +149,7 @@ def main():
     if not os.path.exists(args.statistics_save_path):
         os.mkdir(args.statistics_save_path)
     if args.matching_image_save_path is not None:
-        if os.path.exists(args.matching_image_save_path):
+        if not os.path.exists(args.matching_image_save_path):
             os.mkdir(args.matching_image_save_path)
 
     eval(args)
